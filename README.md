@@ -4,9 +4,9 @@ This module displays the current marine weather, including the water temperature
 The wave period display may be enabled or disabled. 
 
 <p align="left">
-<img alt="MMM-MarineWeather Screenshot #1" src="MMM-MarineWeather_screenshot1.png" height="200px">
-<img alt="MMM-MarineWeather Screenshot #2" src="MMM-MarineWeather_screenshot2.png" height="200px">
-<img alt="MMM-MarineWeather Screenshot #3" src="MMM-MarineWeather_screenshot3.png" height="200px">
+<img alt="MMM-MarineWeather Screenshot #1" src="MMM-MarineWeather_screenshot1.png" height="150px">
+<img alt="MMM-MarineWeather Screenshot #2" src="MMM-MarineWeather_screenshot2.png" height="150px">
+<img alt="MMM-MarineWeather Screenshot #3" src="MMM-MarineWeather_screenshot3.png" height="150px">
 </p>
 
 [MagicMirror Project on Github](https://github.com/MichMich/MagicMirror) | [StormGlass](https://stormglass.io/)
