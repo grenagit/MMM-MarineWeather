@@ -1,0 +1,24 @@
+{
+  "name": "MMM-MarineWeather",
+  "version": "0.1.0",
+  "description": "Module for a Magic Mirror device display the current marine weather.",
+  "main": "MMM-MarineWeather.js",
+  "author": "Grena",
+  "license": "MIT",
+  "dependencies": {
+    "request": "^2.88.0",
+    "moment": "^1.1.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/grenagit/MMM-MarineWeather.git"
+  },
+  "keywords": [
+    "marine weather",
+    "sea weather",
+    "storm glass",
+    "temperature",
+    "wind",
+    "wave"
+  ],
+}
