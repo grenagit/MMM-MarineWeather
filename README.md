@@ -65,7 +65,6 @@ The following properties can be configured:
 
 | Option                       | Description
 | ---------------------------- | -----------
-
 | `latitude`                   | The latitude of the desired point <br><br>  This value is **REQUIRED**
 | `longitude`                  | The longitude of the desired point <br><br>  This value is **REQUIRED**
 | `appid`                      | The [StormGlass](https://docs.stormglass.io) API key, which can be obtained by [signing up](https://dashboard.stormglass.io/register) on StormGlass portal. It's free for 50 requests per day! <br><br>  This value is **REQUIRED**
