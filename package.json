@@ -1,6 +1,6 @@
 {
   "name": "MMM-MarineWeather",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "Module for a Magic Mirror device display the current marine weather.",
   "main": "MMM-MarineWeather.js",
   "author": "Grena",
@@ -20,5 +20,5 @@
     "temperature",
     "wind",
     "wave"
-  ],
+  ]
 }

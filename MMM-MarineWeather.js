@@ -55,6 +55,7 @@ Module.register("MMM-MarineWeather",{
 		this.waveDirection = null;
 		this.wavePeriod = null;
 		this.loaded = false;
+
 		this.scheduleUpdate(this.config.initialLoadDelay);
 	},
 
@@ -164,6 +165,8 @@ Module.register("MMM-MarineWeather",{
 	socketNotificationReceived: function(notification, payload) {
 		if (notification === "STARTED") {
 			this.updateDom(this.config.animationSpeed);
+		} else if (notification === "ERROR") {
+			Log.error(this.name + ": Do not access to data (" + payload + " HTTP error).");
 		} else if (notification === "DATA") {
 			this.processMW(JSON.parse(payload));
 		}
@@ -218,11 +221,17 @@ Module.register("MMM-MarineWeather",{
 		this.waveDeg = data.hours[0].waveDirection[0].value;
 		this.waveDirection = this.deg2Cardinal(data.hours[0].waveDirection[0].value);
 		if (this.config.showWavePeriod) {
-			this.wavePeriod = parseFloat(data.hours[0].wavePeriod[0].value).toFixed(1);
+			if (typeof data.hours[0].wavePeriod[0] !== "undefined") {
+				this.wavePeriod = parseFloat(data.hours[0].wavePeriod[0].value).toFixed(1);
+			} else {
+				this.config.showWavePeriod = false;
+				Log.error(this.name + ": Do not receive usable data for wave period (this information will be hidden).");
+			}
 		}
 
 		this.loaded = true;
 		this.updateDom(this.config.animationSpeed);
+		this.scheduleUpdate();
 	},
 
 	// Schedule next update

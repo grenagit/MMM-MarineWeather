@@ -16,11 +16,6 @@ var moment = require('moment');
 
 module.exports = NodeHelper.create({
 
-	start: function() {
-		this.started = false;
-		this.configNotif = null;
-	},
-
 	getParams: function() {
 		var self = this;
 
@@ -47,16 +42,18 @@ module.exports = NodeHelper.create({
 			if (!error && response.statusCode === 200) {
 				self.sendSocketNotification("DATA", body);
 			}
+			if (response.statusCode !== 200) {
+				self.sendSocketNotification("ERROR", response.statusCode);
+			}
 		});
 	},
 
 	socketNotificationReceived: function(notification, payload) {
 		var self = this;
-		if (notification === 'CONFIG' && self.started == false) {
+		if (notification === 'CONFIG') {
 			self.config = payload;
 			self.sendSocketNotification("STARTED", true);
 			self.getData();
-			self.started = true;
 		}
 	}
 });

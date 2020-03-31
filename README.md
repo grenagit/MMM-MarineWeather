@@ -83,12 +83,12 @@ The following properties can be configured:
 | `params`                     | The comma separeted list of params for the StormGlass API response. <br><br> **Default value:**  `'airTemperature,waterTemperature,windSpeed,windDirection,waveHeight,waveDirection,wavePeriod'`
 | `dataSource`	       	       | The StormGlass API information [source](https://docs.stormglass.io/#sources). <br><br> **Possible values:** `'sg'` or `'noaa'` <br> **Default value:**  `'sg'` (StormGlass).
 
-### Todo
+## Todo:
 
 - [ ] Add a coloured legend depending on the water temperature
 - [x] Convert data to the selected unit system with config.units
 - [x] Add the Air temperature
 
-### License
+## License:
 
 This module is licensed under the MIT License
