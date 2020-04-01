@@ -46,19 +46,6 @@ module.exports = NodeHelper.create({
 		.then(function(body) {
 			self.sendSocketNotification("DATA", body);
 		});
-		
-		/*request({
-			url: self.config.apiBase + self.config.MWEndpoint + self.getParams(),
-			method: 'GET',
-			headers: { 'Authorization': self.config.appid },
-		}, function (error, response, body) {
-			if (!error && response.statusCode === 200) {
-				self.sendSocketNotification("DATA", body);
-			}
-			if (response.statusCode !== 200) {
-				self.sendSocketNotification("ERROR", response.statusCode);
-			}
-		});*/
 	},
 
 	socketNotificationReceived: function(notification, payload) {
