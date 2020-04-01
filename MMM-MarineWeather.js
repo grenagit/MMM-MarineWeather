@@ -168,7 +168,7 @@ Module.register("MMM-MarineWeather",{
 		} else if (notification === "ERROR") {
 			Log.error(this.name + ": Do not access to data (" + payload + " HTTP error).");
 		} else if (notification === "DATA") {
-			this.processMW(JSON.parse(payload));
+			this.processMW(payload);
 		}
 	},
 

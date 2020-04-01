@@ -11,15 +11,13 @@
  */
 
 const NodeHelper = require('node_helper');
-var request = require('request');
-var moment = require('moment');
+const fetch = require('node-fetch');
 
 module.exports = NodeHelper.create({
 
 	getParams: function() {
 		var self = this;
 
-		//var currentDate = encodeURIComponent(moment().format());
 		var currentDate = Math.floor(Date.now() / 1000)
 		var params = "?";
 		
@@ -33,8 +31,23 @@ module.exports = NodeHelper.create({
 
 	getData: function() {
 		var self = this;
+
+		fetch(self.config.apiBase + self.config.MWEndpoint + self.getParams(), {
+				method: 'GET',
+				headers: {'Authorization': self.config.appid}
+		})
+		.then(function(response) {
+			if (response.status === 200) {
+				return response.json();
+			} else {
+				self.sendSocketNotification("ERROR", response.status);
+			}
+		})
+		.then(function(body) {
+			self.sendSocketNotification("DATA", body);
+		});
 		
-		request({
+		/*request({
 			url: self.config.apiBase + self.config.MWEndpoint + self.getParams(),
 			method: 'GET',
 			headers: { 'Authorization': self.config.appid },
@@ -45,7 +58,7 @@ module.exports = NodeHelper.create({
 			if (response.statusCode !== 200) {
 				self.sendSocketNotification("ERROR", response.statusCode);
 			}
-		});
+		});*/
 	},
 
 	socketNotificationReceived: function(notification, payload) {

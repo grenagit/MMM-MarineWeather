@@ -1,13 +1,12 @@
 {
   "name": "MMM-MarineWeather",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Module for a Magic Mirror device display the current marine weather.",
   "main": "MMM-MarineWeather.js",
   "author": "Grena",
   "license": "MIT",
   "dependencies": {
-    "request": "^2.88.0",
-    "moment": "^1.1.4"
+    "node-fetch": "^2.6.0"
   },
   "repository": {
     "type": "git",
