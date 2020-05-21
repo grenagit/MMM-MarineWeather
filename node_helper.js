@@ -22,7 +22,7 @@ module.exports = NodeHelper.create({
 		var params = "?";
 		
 		params += "lat=" + self.config.latitude + "&lng=" + self.config.longitude;
-		params += "&params=" + self.config.params;
+		params += "&params=" + self.config.params.join();
 		params += "&source=" + self.config.dataSource;
 		params += "&start=" + currentDate  + "&end=" + currentDate ;
 
