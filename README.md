@@ -4,10 +4,10 @@ This module displays the current marine weather, including the water temperature
 Apart from water temperature and air temperature, all other information may be enabled or disabled.
 
 <p align="left">
-<img alt="MMM-MarineWeather Screenshot #1" src="MMM-MarineWeather_screenshot1.png" height="150px">
-<img alt="MMM-MarineWeather Screenshot #2" src="MMM-MarineWeather_screenshot2.png" height="150px">
-<img alt="MMM-MarineWeather Screenshot #3" src="MMM-MarineWeather_screenshot3.png" height="150px">
-<img alt="MMM-MarineWeather Screenshot #4" src="MMM-MarineWeather_screenshot4.png" height="150px">
+<img alt="MMM-MarineWeather Screenshot #1" src="MMM-MarineWeather_screenshot1.png" height="120px">
+<img alt="MMM-MarineWeather Screenshot #2" src="MMM-MarineWeather_screenshot2.png" height="120px">
+<img alt="MMM-MarineWeather Screenshot #3" src="MMM-MarineWeather_screenshot3.png" height="120px">
+<img alt="MMM-MarineWeather Screenshot #4" src="MMM-MarineWeather_screenshot4.png" height="120px">
 </p>
 
 [MagicMirror Project on Github](https://github.com/MichMich/MagicMirror) | [StormGlass](https://stormglass.io/)
@@ -75,14 +75,14 @@ The following properties can be configured:
 | `showWindDirectionAsArrow`   | Show the wind direction as an arrow instead of abbreviation <br><br> **Possible values:** `true` or `false` <br> **Default value:** `false`
 | `showGustAsWind`             | Show the wind gust instead of the wind speed. <br><br> **Possible values:** `true` or `false` <br> **Default value:** `false`
 | `useBeaufort`                | Use the Beaufort scale for wind speed and wave speed or using the default units. <br><br> **Possible values:** `true` or `false` <br> **Default value:** `false`
-| `useKMPH`                    | Use KMPH as units for wind speed. <br><br> **Possible values:**`true` or `false`<br>**Default value:** `true`
+| `useKMPH`                    | Use KMPH as units for wind speed. <br><br> **Possible values:**`true` or `false`<br>**Default value:** `false`
 | `roundTemp`                  | Round temperature value to nearest integer. <br><br> **Possible values:** `true` (round to integer) or `false` (display exact value with decimal point) <br> **Default value:** `false`
 | `initialLoadDelay`           | The initial delay before loading. If you have multiple modules that use the same API key, you might want to delay one of the requests. (Milliseconds) <br><br> **Possible values:** `1000` - `5000` <br> **Default value:**  `0`
 | `retryDelay`                 | The delay before retrying after a request failure. (Milliseconds) <br><br> **Possible values:** `1000` - `60000` <br> **Default value:**  `2500` (2,5 seconds)
 | `apiBase`                    | The StormGlass API base URL. <br><br> **Default value:**  `'https://api.stormglass.io/'`
-| `apodEndpoint`	             | The StormGlass API v2 end point. <br><br> **Default value:**  `'v2/weather/point'`
+| `apodEndpoint`               | The StormGlass API v2 end point. <br><br> **Default value:**  `'v2/weather/point'`
 | `params`                     | The array of parameters for the StormGlass API response. <br><br> **Required parameters:** `'airTemperature'` and `'waterTemperature'` <br> **Optionals parameters:** `'pressure'`, `'cloudCover'`, `'visibility'`, `'seaLevel'`, `'windSpeed'`, `'gust'`, `'windDirection'`, `'waveHeight'`, `'waveDirection'` or `'wavePeriod'` <br> **Default value:**  `['airTemperature', 'waterTemperature', 'pressure', 'cloudCover', 'windSpeed', 'windDirection', 'waveHeight', 'waveDirection']`
-| `dataSource`	       	       | The StormGlass API information [source](https://docs.stormglass.io/#sources). <br><br> **Possible values:** `'sg'` or `'noaa'` (except sea level) <br> **Default value:**  `'sg'` (StormGlass).
+| `dataSource`                 | The StormGlass API information [source](https://docs.stormglass.io/#sources). <br><br> **Possible values:** `'sg'` or `'noaa'` (except sea level) <br> **Default value:**  `'sg'` (StormGlass).
 
 ## Todo:
 

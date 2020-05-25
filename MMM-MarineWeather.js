@@ -21,7 +21,7 @@ Module.register("MMM-MarineWeather",{
 		showDirectionAsArrow: false,
 		showGustAsWind: false,
 		useBeaufort: false,
-		useKMPH: true,
+		useKMPH: false,
 		roundTemp: false,
 		
 		initialLoadDelay: 0, // 0 second delay
@@ -275,7 +275,7 @@ Module.register("MMM-MarineWeather",{
 					this.pressureUnit = "hPa";
 					break;
 				case "imperial":
-					this.pressure = parseFloat(data.hours[0].pressure[this.config.dataSource] / 6.895).toFixed(0);
+					this.pressure = parseFloat(data.hours[0].pressure[this.config.dataSource] / 68.94).toFixed(0);
 					this.pressureUnit = "psi";
 					break;
 			}
