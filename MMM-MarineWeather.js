@@ -19,18 +19,18 @@ Module.register("MMM-MarineWeather",{
 		updateInterval: 60 * 60 * 1000, // every 1 hour
 		animationSpeed: 1000, // 1 second
 		showDirectionAsArrow: false,
-		showWavePeriod: false,
+		showGustAsWind: false,
 		useBeaufort: false,
-		useKMPH: true,
+		useKMPH: false,
 		roundTemp: false,
 		
 		initialLoadDelay: 0, // 0 second delay
 		retryDelay: 2500, // 2,5 seconds
 
 		apiBase: "https://api.stormglass.io/",
-		MWEndpoint: "v1/weather/point",
-		params: "airTemperature,waterTemperature,windSpeed,windDirection,waveHeight,waveDirection,wavePeriod",
-		dataSource: "sg",
+		MWEndpoint: "v2/weather/point",
+		params: ["airTemperature", "waterTemperature", "pressure", "cloudCover", "windSpeed", "windDirection", "waveHeight", "waveDirection"],
+		dataSource: "sg"
 	},
 
 	// Define required scripts
@@ -45,6 +45,13 @@ Module.register("MMM-MarineWeather",{
 		this.airTemperature = null;
 		this.waterTemperature = null;
 		this.temperatureUnit = null;
+		this.pressure = null;
+		this.pressureUnit = null;
+		this.cloudCover = null;
+		this.visibility = null;
+		this.visibilityUnit = null;
+		this.seaLevel = null;
+		this.seaLevelUnit = null;
 		this.windSpeed = null;
 		this.windSpeedUnit = null;
 		this.windDeg = null;
@@ -83,51 +90,78 @@ Module.register("MMM-MarineWeather",{
 
 		var medium = document.createElement("div");
 		medium.className = "normal medium";
-
-		var windIcon = document.createElement("span");
-		windIcon.className = "fas fa-wind dimmed";
-		medium.appendChild(windIcon);
-
-		var windSpeed = document.createElement("span");
-		windSpeed.innerHTML = " " + this.windSpeed + "<span class=\"xsmall\">" + this.windSpeedUnit + "</span>";;
-		medium.appendChild(windSpeed);
-
-		var windDirection = document.createElement("sup");
-		if (this.config.showDirectionAsArrow) {
-			if(this.windDeg !== null) {
-				windDirection.innerHTML = " &nbsp;<i class=\"fas fa-long-arrow-alt-down\" style=\"transform:rotate(" + this.windDeg + "deg);\"></i>&nbsp;";
-			}
-		} else {
-			windDirection.innerHTML = " " + this.translate(this.windDirection);
+		
+		if(this.windSpeed !== null || this.windDirection !== null) {
+			var windIcon = document.createElement("span");
+			windIcon.className = "fas fa-wind dimmed";
+			medium.appendChild(windIcon);
 		}
-		medium.appendChild(windDirection);
 
-		var spacer = document.createElement("span");
-		spacer.innerHTML = "&nbsp;";
-		medium.appendChild(spacer);
-
-		var waveIcon = document.createElement("span");
-		waveIcon.className = "fas fa-water dimmed";
-		medium.appendChild(waveIcon);
-
-		var waveHeight = document.createElement("span");
-		waveHeight.innerHTML = " " + this.waveHeight + "<span class=\"xsmall\">" + this.waveHeightUnit + "</span>";
-		medium.appendChild(waveHeight);
-
-		var waveDirection = document.createElement("sup");
-		if (this.config.showDirectionAsArrow) {
-			if(this.waveDeg !== null) {
-				waveDirection.innerHTML = " &nbsp;<i class=\"fas fa-long-arrow-alt-down\" style=\"transform:rotate(" + this.waveDeg + "deg);\"></i>&nbsp;";
-			}
-		} else {
-			waveDirection.innerHTML = " " + this.translate(this.waveDirection);
+		if(this.windSpeed !== null) {
+			var windSpeed = document.createElement("span");
+			windSpeed.innerHTML = " " + this.windSpeed + "<span class=\"xsmall\">" + this.windSpeedUnit + "</span>";
+			medium.appendChild(windSpeed);
 		}
-		medium.appendChild(waveDirection);
+		
+		if(this.windDirection !== null) {	
+			var windDirection = document.createElement("sup");
+			if (this.config.showDirectionAsArrow) {
+				if(this.windDeg !== null) {
+					windDirection.innerHTML = " &nbsp;<i class=\"fas fa-long-arrow-alt-down\" style=\"transform:rotate(" + this.windDeg + "deg);\"></i>&nbsp;";
+				}
+			} else {
+				windDirection.innerHTML = " " + this.translate(this.windDirection);
+			}
+			medium.appendChild(windDirection);
+		}
+		
+		
+		if(this.waveHeight !== null || this.waveDirection !== null || this.wavePeriod !== null) {
+			var spacer = document.createElement("span");
+			spacer.innerHTML = "&nbsp;";
+			medium.appendChild(spacer);
 
-		if (this.config.showWavePeriod) {
+			var waveIcon = document.createElement("span");
+			waveIcon.className = "fas fa-water dimmed";
+			medium.appendChild(waveIcon);
+		}
+		
+		if(this.waveHeight !== null) {
+			var waveHeight = document.createElement("span");
+			waveHeight.innerHTML = " " + this.waveHeight + "<span class=\"xsmall\">" + this.waveHeightUnit + "</span>";
+			medium.appendChild(waveHeight);
+		}
+		
+		if(this.waveDirection !== null) {
+			var waveDirection = document.createElement("sup");
+			if (this.config.showDirectionAsArrow) {
+				if(this.waveDeg !== null) {
+					waveDirection.innerHTML = " &nbsp;<i class=\"fas fa-long-arrow-alt-down\" style=\"transform:rotate(" + this.waveDeg + "deg);\"></i>&nbsp;";
+				}
+			} else {
+				waveDirection.innerHTML = " " + this.translate(this.waveDirection);
+			}
+			medium.appendChild(waveDirection);
+		}
+
+		if (this.wavePeriod !== null) {
 			var wavePeriod = document.createElement("span");
 			wavePeriod.innerHTML = " " + this.wavePeriod + "<span class=\"xsmall\">s</span>";
 			medium.appendChild(wavePeriod);
+		}
+		
+		if (this.seaLevel !== null) {
+			var spacer = document.createElement("span");
+			spacer.innerHTML = "&nbsp;";
+			medium.appendChild(spacer);
+			
+			var rulerIcon = document.createElement("span");
+			rulerIcon.className = "fas fa-ruler-vertical dimmed";
+			medium.appendChild(rulerIcon);
+
+			var seaLevel = document.createElement("span");
+			seaLevel.innerHTML = " " + this.seaLevel + "<span class=\"xsmall\">" + this.seaLevelUnit + "</span>";
+			medium.appendChild(seaLevel);
 		}
 
 		wrapper.appendChild(medium);
@@ -155,6 +189,48 @@ Module.register("MMM-MarineWeather",{
 		var airTemperature = document.createElement("span");
 		airTemperature.innerHTML = " " + this.airTemperature + this.temperatureUnit;
 		small.appendChild(airTemperature);
+				
+		if (this.pressure !== null) {
+			var spacer = document.createElement("span");
+			spacer.innerHTML = "&nbsp;";
+			small.appendChild(spacer);
+			
+			var compassIcon = document.createElement("span");
+			compassIcon.className = "fas fa-compass";
+			small.appendChild(compassIcon);
+
+			var pressure = document.createElement("span");
+			pressure.innerHTML = " " + this.pressure + "<span class=\"xsmall\">" + this.pressureUnit + "</span>";
+			small.appendChild(pressure);
+		}
+	
+		if (this.cloudCover !== null) {
+			var spacer = document.createElement("span");
+			spacer.innerHTML = "&nbsp;";
+			small.appendChild(spacer);
+			
+			var cloudIcon = document.createElement("span");
+			cloudIcon.className = "fas fa-cloud";
+			small.appendChild(cloudIcon);
+
+			var cloudCover = document.createElement("span");
+			cloudCover.innerHTML = " " + this.cloudCover + "%";
+			small.appendChild(cloudCover);
+		}
+
+		if (this.visibility !== null) {
+			var spacer = document.createElement("span");
+			spacer.innerHTML = "&nbsp;";
+			small.appendChild(spacer);
+			
+			var cloudIcon = document.createElement("span");
+			cloudIcon.className = "fas fa-binoculars";
+			small.appendChild(cloudIcon);
+
+			var visibility = document.createElement("span");
+			visibility.innerHTML = " " + this.visibility + "<span class=\"xsmall\">" + this.visibilityUnit + "</span>";
+			small.appendChild(visibility);
+		}
 
 		wrapper.appendChild(small);
 
@@ -178,55 +254,104 @@ Module.register("MMM-MarineWeather",{
 			Log.error(this.name + ": Do not receive usable data.");
 			return;
 		}
-
+		
 		switch(this.config.units) {
 			case "metric":
-				this.waterTemperature = this.roundValue(data.hours[0].waterTemperature[0].value);
-				this.airTemperature = this.roundValue(data.hours[0].airTemperature[0].value);
+				this.waterTemperature = this.roundValue(data.hours[0].waterTemperature[this.config.dataSource]);
+				this.airTemperature = this.roundValue(data.hours[0].airTemperature[this.config.dataSource]);
 				this.temperatureUnit = "&deg;C";
 				break;
 			case "imperial":
-				this.waterTemperature = this.roundValue((data.hours[0].waterTemperature[0].value * 1.8) + 32);
-				this.airTemperature = this.roundValue((data.hours[0].airTemperature[0].value * 1.8) + 32);
+				this.waterTemperature = this.roundValue((data.hours[0].waterTemperature[this.config.dataSource] * 1.8) + 32);
+				this.airTemperature = this.roundValue((data.hours[0].airTemperature[this.config.dataSource] * 1.8) + 32);
 				this.temperatureUnit = "&deg;F";
 				break;
 		}
-
-		if (this.config.useBeaufort){
-			this.windSpeed = this.ms2Beaufort(this.roundValue(data.hours[0].windSpeed[0].value));
-			this.windSpeedUnit = "bf";
-		} else if (this.config.useKMPH) {
-			this.windSpeed = parseFloat((data.hours[0].windSpeed[0].value * 60 * 60) / 1000).toFixed(0);
-			this.windSpeedUnit = "km/h";
-		} else if(this.config.units === "imperial") {
-			this.windSpeed = parseFloat((data.hours[0].windSpeed[0].value * 60 * 60) / 1609).toFixed(0);
-			this.windSpeedUnit = "mph";
-		} else {
-			this.windSpeed = parseFloat(data.hours[0].windSpeed[0].value).toFixed(0);
-			this.windSpeedUnit = "m/s";
-		}
-		this.windDeg = data.hours[0].windDirection[0].value;
-		this.windDirection = this.deg2Cardinal(data.hours[0].windDirection[0].value);
-
-		switch(this.config.units) {
-			case "metric":
-				this.waveHeight = parseFloat(data.hours[0].waveHeight[0].value).toFixed(1);
-				this.waveHeightUnit = "m";
-				break;
-			case "imperial":
-				this.waveHeight = parseFloat(data.hours[0].waveHeight[0].value / 0.3048).toFixed(1);
-				this.waveHeightUnit = "ft";
-				break;
-		}
-		this.waveDeg = data.hours[0].waveDirection[0].value;
-		this.waveDirection = this.deg2Cardinal(data.hours[0].waveDirection[0].value);
-		if (this.config.showWavePeriod) {
-			if (typeof data.hours[0].wavePeriod[0] !== "undefined") {
-				this.wavePeriod = parseFloat(data.hours[0].wavePeriod[0].value).toFixed(1);
-			} else {
-				this.config.showWavePeriod = false;
-				Log.error(this.name + ": Do not receive usable data for wave period (this information will be hidden).");
+		
+		if (this.checkData(data, "pressure")) {
+			switch(this.config.units) {
+				case "metric":
+					this.pressure = parseFloat(data.hours[0].pressure[this.config.dataSource]).toFixed(0);
+					this.pressureUnit = "hPa";
+					break;
+				case "imperial":
+					this.pressure = parseFloat(data.hours[0].pressure[this.config.dataSource] / 68.94).toFixed(0);
+					this.pressureUnit = "psi";
+					break;
 			}
+		}
+		
+		if (this.checkData(data, "cloudCover")) {
+			this.cloudCover = parseFloat(data.hours[0].cloudCover[this.config.dataSource]).toFixed(0);
+		}
+		
+		if (this.checkData(data, "visibility")) {
+			switch(this.config.units) {
+				case "metric":
+					this.visibility = parseFloat(data.hours[0].visibility[this.config.dataSource]).toFixed(1);
+					this.visibilityUnit = "km";
+					break;
+				case "imperial":
+					this.visibility = parseFloat(data.hours[0].visibility[this.config.dataSource] * 0.6214).toFixed(1);
+					this.visibilityUnit = "mi";
+					break;
+			}
+		}
+		
+		if (this.checkData(data, "seaLevel")) {
+			switch(this.config.units) {
+				case "metric":
+					this.seaLevel = parseFloat(data.hours[0].seaLevel[this.config.dataSource]).toFixed(1);
+					this.seaLevelUnit = "m";
+					break;
+				case "imperial":
+					this.seaLevel = parseFloat(data.hours[0].seaLevel[this.config.dataSource] / 0.3048).toFixed(1);
+					this.seaLevelUnit = "ft";
+					break;
+			}	
+		}
+		
+		if (this.checkData(data, "windSpeed")) {
+			if (this.config.useBeaufort){
+				this.windSpeed = this.ms2Beaufort(this.roundValue(data.hours[0].windSpeed[this.config.dataSource]));
+				this.windSpeedUnit = "bf";
+			} else if (this.config.useKMPH) {
+				this.windSpeed = parseFloat((data.hours[0].windSpeed[this.config.dataSource] * 60 * 60) / 1000).toFixed(0);
+				this.windSpeedUnit = "km/h";
+			} else if(this.config.units === "imperial") {
+				this.windSpeed = parseFloat((data.hours[0].windSpeed[this.config.dataSource] * 60 * 60) / 1609).toFixed(0);
+				this.windSpeedUnit = "mph";
+			} else {
+				this.windSpeed = parseFloat(data.hours[0].windSpeed[this.config.dataSource]).toFixed(0);
+				this.windSpeedUnit = "m/s";
+			}
+		}
+		
+		if (this.checkData(data, "windDirection")) {
+			this.windDeg = data.hours[0].windDirection[this.config.dataSource];
+			this.windDirection = this.deg2Cardinal(data.hours[0].windDirection[this.config.dataSource]);
+		}
+		
+		if (this.checkData(data, "waveHeight")) {
+			switch(this.config.units) {
+				case "metric":
+					this.waveHeight = parseFloat(data.hours[0].waveHeight[this.config.dataSource]).toFixed(1);
+					this.waveHeightUnit = "m";
+					break;
+				case "imperial":
+					this.waveHeight = parseFloat(data.hours[0].waveHeight[this.config.dataSource] / 0.3048).toFixed(1);
+					this.waveHeightUnit = "ft";
+					break;
+			}
+		}
+		
+		if (this.checkData(data, "waveDirection")) {
+			this.waveDeg = data.hours[0].waveDirection[this.config.dataSource];
+			this.waveDirection = this.deg2Cardinal(data.hours[0].waveDirection[this.config.dataSource]);
+		}
+
+		if (this.checkData(data, "wavePeriod")) {
+			this.wavePeriod = parseFloat(data.hours[0].wavePeriod[this.config.dataSource]).toFixed(1);
 		}
 
 		this.loaded = true;
@@ -301,6 +426,20 @@ Module.register("MMM-MarineWeather",{
 	roundValue: function(temperature) {
 		var decimals = this.config.roundTemp ? 0 : 1;
 		return parseFloat(temperature).toFixed(decimals);
+	},
+	
+	// Check if data is usable
+	checkData: function(data, param) {
+		if(this.config.params.indexOf(param) !== -1) {
+			if (typeof data.hours[0][param] !== "undefined") {
+				return true;
+			} else {
+				Log.error(this.name + ": Do not receive usable data for " + param + " (this information will be hidden).");
+				return false;
+			}
+		} else {
+			return false;
+		}
 	}
 
 });

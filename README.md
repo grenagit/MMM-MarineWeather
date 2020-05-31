@@ -1,12 +1,13 @@
 # Module: MMM-MarineWeather
-This module displays the current marine weather, including the water temperature, the air temperature, the current wind conditions (speed and direction) and current wave conditions (height, direction and period).
+This module displays the current marine weather, including the water temperature, the air temperature, the current wind conditions (speed and direction), current wave conditions (height, direction and period) and more specific informations (pressure, cloud cover, visibility, sea level).
 
-The wave period display may be enabled or disabled. 
+Apart from water temperature and air temperature, all other information may be enabled or disabled.
 
 <p align="left">
-<img alt="MMM-MarineWeather Screenshot #1" src="MMM-MarineWeather_screenshot1.png" height="150px">
-<img alt="MMM-MarineWeather Screenshot #2" src="MMM-MarineWeather_screenshot2.png" height="150px">
-<img alt="MMM-MarineWeather Screenshot #3" src="MMM-MarineWeather_screenshot3.png" height="150px">
+<img alt="MMM-MarineWeather Screenshot #1" src="MMM-MarineWeather_screenshot1.png" height="120px">
+<img alt="MMM-MarineWeather Screenshot #2" src="MMM-MarineWeather_screenshot2.png" height="120px">
+<img alt="MMM-MarineWeather Screenshot #3" src="MMM-MarineWeather_screenshot3.png" height="120px">
+<img alt="MMM-MarineWeather Screenshot #4" src="MMM-MarineWeather_screenshot4.png" height="120px">
 </p>
 
 [MagicMirror Project on Github](https://github.com/MichMich/MagicMirror) | [StormGlass](https://stormglass.io/)
@@ -72,22 +73,32 @@ The following properties can be configured:
 | `updateInterval`             | How often does the content needs to be fetched? (Milliseconds) <br><br> **Possible values:** `1000` - `86400000` <br> **Default value:** `60 * 60 * 1000` (1 hour)
 | `animationSpeed`             | Speed of the update animation. (Milliseconds) <br><br> **Possible values:**`0` - `5000` <br> **Default value:** `1000` (1 second)
 | `showWindDirectionAsArrow`   | Show the wind direction as an arrow instead of abbreviation <br><br> **Possible values:** `true` or `false` <br> **Default value:** `false`
-| `showWavePeriod`   	       | Show the wave period <br><br> **Possible values:** `true` or `false` <br> **Default value:** `false`
+| `showGustAsWind`             | Show the wind gust instead of the wind speed. <br><br> **Possible values:** `true` or `false` <br> **Default value:** `false`
 | `useBeaufort`                | Use the Beaufort scale for wind speed and wave speed or using the default units. <br><br> **Possible values:** `true` or `false` <br> **Default value:** `false`
-| `useKMPH`                    | Use KMPH as units for wind speed. <br><br> **Possible values:**`true` or `false`<br>**Default value:** `true`
+| `useKMPH`                    | Use KMPH as units for wind speed. <br><br> **Possible values:**`true` or `false`<br>**Default value:** `false`
 | `roundTemp`                  | Round temperature value to nearest integer. <br><br> **Possible values:** `true` (round to integer) or `false` (display exact value with decimal point) <br> **Default value:** `false`
 | `initialLoadDelay`           | The initial delay before loading. If you have multiple modules that use the same API key, you might want to delay one of the requests. (Milliseconds) <br><br> **Possible values:** `1000` - `5000` <br> **Default value:**  `0`
 | `retryDelay`                 | The delay before retrying after a request failure. (Milliseconds) <br><br> **Possible values:** `1000` - `60000` <br> **Default value:**  `2500` (2,5 seconds)
 | `apiBase`                    | The StormGlass API base URL. <br><br> **Default value:**  `'https://api.stormglass.io/'`
-| `apodEndpoint`	       | The StormGlass API endPoint. <br><br> **Default value:**  `'v1/weather/point'`
-| `params`                     | The comma separeted list of params for the StormGlass API response. <br><br> **Default value:**  `'airTemperature,waterTemperature,windSpeed,windDirection,waveHeight,waveDirection,wavePeriod'`
-| `dataSource`	       	       | The StormGlass API information [source](https://docs.stormglass.io/#sources). <br><br> **Possible values:** `'sg'` or `'noaa'` <br> **Default value:**  `'sg'` (StormGlass).
+| `apodEndpoint`               | The StormGlass API v2 end point. <br><br> **Default value:**  `'v2/weather/point'`
+| `params`                     | The array of parameters for the StormGlass API response. <br><br> **Required parameters:** `'airTemperature'` and `'waterTemperature'` <br> **Optionals parameters:** `'pressure'`, `'cloudCover'`, `'visibility'`, `'seaLevel'`, `'windSpeed'`, `'gust'`, `'windDirection'`, `'waveHeight'`, `'waveDirection'` or `'wavePeriod'` <br> **Default value:**  `['airTemperature', 'waterTemperature', 'pressure', 'cloudCover', 'windSpeed', 'windDirection', 'waveHeight', 'waveDirection']`
+| `dataSource`                 | The StormGlass API information [source](https://docs.stormglass.io/#sources). <br><br> **Possible values:** `'sg'` or `'noaa'` (except sea level) <br> **Default value:**  `'sg'` (StormGlass).
 
 ## Todo:
 
 - [ ] Add a coloured legend depending on the water temperature
+- [x] Add customization of displayed information except water temperature and air temperature.
+- [x] Add specific informations (pressure, cloud cover, visibility, sea level) with API v2.
 - [x] Convert data to the selected unit system with config.units
 - [x] Add the Air temperature
+
+## Testing:
+
+To test the new features, you can use the testing branch:
+
+- Change from master version to testing version: `git checkout testing`
+- Return to master version from testing version: `git checkout master`
+- Check the version used: `git branch -v`
 
 ## License:
 
