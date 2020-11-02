@@ -17,27 +17,27 @@ module.exports = NodeHelper.create({
 
 	getUrl: function(type) {
 		var self = this;
-		
+
 		var currentTime = Math.floor(Date.now() / 1000);
-		
+
 		var params = "?";
 		var url = self.config.apiBase;
-		
+
 		params += "lat=" + self.config.latitude + "&lng=" + self.config.longitude;
-		
+
 		switch(type) {
 			case "weather":
 				params += "&start=" + currentTime  + "&end=" + currentTime;
 				params += "&params=" + self.config.params.join();
 				params += "&source=" + self.config.dataSource;
-				
+
 				url += self.config.weatherEndpoint;
 				url += params;
 				break;
-				
+
 			case "tide":
 				params += "&start=" + currentTime;
-				
+
 				url += self.config.tideEndpoint;
 				url += params;
 				break;
@@ -45,15 +45,15 @@ module.exports = NodeHelper.create({
 
 		return url;
 	},
-	
+
 	getData: function(apis) {
 		var self = this;
-		
+
 		var options = {
 			method: 'GET',
 			headers: {'Authorization': self.config.appid}
 		};
-		
+
 		Promise.all(apis.map(function(api) {
 			return fetch(self.getUrl(api), options);
 		}))
@@ -77,10 +77,10 @@ module.exports = NodeHelper.create({
 
 	socketNotificationReceived: function(notification, payload) {
 		var self = this;
-		
+
 		if (notification === "CONFIG") {
 			self.config = payload;
-			self.sendSocketNotification("STARTED", true);	
+			self.sendSocketNotification("STARTED", true);
 			if(self.config.showTides) {
 				self.getData(["weather", "tide"]);
 			} else {

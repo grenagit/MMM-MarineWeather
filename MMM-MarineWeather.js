@@ -25,7 +25,7 @@ Module.register("MMM-MarineWeather",{
 		useBeaufort: false,
 		useKMPH: false,
 		roundTemp: false,
-		
+
 		initialLoadDelay: 0, // 0 second delay
 		retryDelay: 2500, // 2,5 seconds
 
@@ -101,7 +101,7 @@ Module.register("MMM-MarineWeather",{
 
 		var medium = document.createElement("div");
 		medium.className = "normal medium";
-		
+
 		if(this.windSpeed !== null || this.windDirection !== null) {
 			var windIcon = document.createElement("span");
 			windIcon.className = "fas fa-wind dimmed";
@@ -113,8 +113,8 @@ Module.register("MMM-MarineWeather",{
 			windSpeed.innerHTML = " " + this.windSpeed + "<span class=\"xsmall\">" + this.windSpeedUnit + "</span>";
 			medium.appendChild(windSpeed);
 		}
-		
-		if(this.windDirection !== null) {	
+
+		if(this.windDirection !== null) {
 			var windDirection = document.createElement("sup");
 			if (this.config.showDirectionAsArrow) {
 				if(this.windDeg !== null) {
@@ -125,8 +125,8 @@ Module.register("MMM-MarineWeather",{
 			}
 			medium.appendChild(windDirection);
 		}
-		
-		
+
+
 		if(this.waveHeight !== null || this.waveDirection !== null || this.wavePeriod !== null) {
 			var spacer = document.createElement("span");
 			spacer.innerHTML = "&nbsp;";
@@ -136,13 +136,13 @@ Module.register("MMM-MarineWeather",{
 			waveIcon.className = "fas fa-water dimmed";
 			medium.appendChild(waveIcon);
 		}
-		
+
 		if(this.waveHeight !== null) {
 			var waveHeight = document.createElement("span");
 			waveHeight.innerHTML = " " + this.waveHeight + "<span class=\"xsmall\">" + this.waveHeightUnit + "</span>";
 			medium.appendChild(waveHeight);
 		}
-		
+
 		if(this.waveDirection !== null) {
 			var waveDirection = document.createElement("sup");
 			if (this.config.showDirectionAsArrow) {
@@ -160,12 +160,12 @@ Module.register("MMM-MarineWeather",{
 			wavePeriod.innerHTML = " " + this.wavePeriod + "<span class=\"xsmall\">s</span>";
 			medium.appendChild(wavePeriod);
 		}
-		
+
 		if (this.seaLevel !== null) {
 			var spacer = document.createElement("span");
 			spacer.innerHTML = "&nbsp;";
 			medium.appendChild(spacer);
-			
+
 			var rulerIcon = document.createElement("span");
 			rulerIcon.className = "fas fa-ruler-vertical dimmed";
 			medium.appendChild(rulerIcon);
@@ -179,7 +179,7 @@ Module.register("MMM-MarineWeather",{
 
 		var large = document.createElement("div");
 		large.className = "large light";
-		
+
 		var waterIcon = document.createElement("span");
 		waterIcon.className = "fas fa-tint watericon";
 		large.appendChild(waterIcon);
@@ -192,7 +192,7 @@ Module.register("MMM-MarineWeather",{
 
 		var small = document.createElement("div");
 		small.className = "dimmed small";
-		
+
 		var airIcon = document.createElement("span");
 		airIcon.className = "fas fa-umbrella-beach";
 		small.appendChild(airIcon);
@@ -200,12 +200,12 @@ Module.register("MMM-MarineWeather",{
 		var airTemperature = document.createElement("span");
 		airTemperature.innerHTML = " " + this.airTemperature + this.temperatureUnit;
 		small.appendChild(airTemperature);
-				
+
 		if (this.pressure !== null) {
 			var spacer = document.createElement("span");
 			spacer.innerHTML = "&nbsp;";
 			small.appendChild(spacer);
-			
+
 			var compassIcon = document.createElement("span");
 			compassIcon.className = "fas fa-compass";
 			small.appendChild(compassIcon);
@@ -214,12 +214,12 @@ Module.register("MMM-MarineWeather",{
 			pressure.innerHTML = " " + this.pressure + "<span class=\"xsmall\">" + this.pressureUnit + "</span>";
 			small.appendChild(pressure);
 		}
-	
+
 		if (this.cloudCover !== null) {
 			var spacer = document.createElement("span");
 			spacer.innerHTML = "&nbsp;";
 			small.appendChild(spacer);
-			
+
 			var cloudIcon = document.createElement("span");
 			cloudIcon.className = "fas fa-cloud";
 			small.appendChild(cloudIcon);
@@ -233,7 +233,7 @@ Module.register("MMM-MarineWeather",{
 			var spacer = document.createElement("span");
 			spacer.innerHTML = "&nbsp;";
 			small.appendChild(spacer);
-			
+
 			var cloudIcon = document.createElement("span");
 			cloudIcon.className = "fas fa-binoculars";
 			small.appendChild(cloudIcon);
@@ -244,35 +244,35 @@ Module.register("MMM-MarineWeather",{
 		}
 
 		wrapper.appendChild(small);
-		
+
 		if(this.config.showTides) {
 			var small = document.createElement("div");
 			small.className = "dimmed small";
 
 			for(let i = 0; i < this.config.maximumTides; i++) {
-			
+
 				if(this.tides[i].type == "high") {
 					var highIcon = document.createElement("span");
 					highIcon.className = "fas fa-sort-up";
 					small.appendChild(highIcon);
 				}
-				
+
 				if(this.tides[i].type == "low") {
 					var lowIcon = document.createElement("span");
 					lowIcon.className = "fas fa-sort-down";
-					small.appendChild(lowIcon);				
+					small.appendChild(lowIcon);
 				}
-			
+
 				var tide = document.createElement("span");
 				tide.innerHTML = " " + this.tides[i].time;
 				small.appendChild(tide);
-				
+
 				var spacer = document.createElement("span");
 				spacer.innerHTML = "&nbsp;";
 				small.appendChild(spacer);
-			
+
 			}
-			
+
 			wrapper.appendChild(small);
 		}
 
@@ -285,7 +285,7 @@ Module.register("MMM-MarineWeather",{
 			this.updateDom(this.config.animationSpeed);
 		} else if (notification === "ERROR") {
 			Log.error(this.name + ": Do not access to data (" + payload + " HTTP error).");
-		} else if (notification === "DATA") { //Log.error(payload);
+		} else if (notification === "DATA") {
 			this.processMW(payload);
 		}
 	},
@@ -296,7 +296,7 @@ Module.register("MMM-MarineWeather",{
 			Log.error(this.name + ": Do not receive usable data.");
 			return;
 		}
-		
+
 		switch(this.config.units) {
 			case "metric":
 				this.waterTemperature = this.roundValue(data.weather.waterTemperature[this.config.dataSource]);
@@ -309,7 +309,7 @@ Module.register("MMM-MarineWeather",{
 				this.temperatureUnit = "&deg;F";
 				break;
 		}
-		
+
 		if (this.checkData(data, "pressure")) {
 			switch(this.config.units) {
 				case "metric":
@@ -322,11 +322,11 @@ Module.register("MMM-MarineWeather",{
 					break;
 			}
 		}
-		
+
 		if (this.checkData(data, "cloudCover")) {
 			this.cloudCover = parseFloat(data.weather.cloudCover[this.config.dataSource]).toFixed(0);
 		}
-		
+
 		if (this.checkData(data, "visibility")) {
 			switch(this.config.units) {
 				case "metric":
@@ -339,7 +339,7 @@ Module.register("MMM-MarineWeather",{
 					break;
 			}
 		}
-		
+
 		if (this.checkData(data, "seaLevel")) {
 			switch(this.config.units) {
 				case "metric":
@@ -350,9 +350,9 @@ Module.register("MMM-MarineWeather",{
 					this.seaLevel = parseFloat(data.weather.seaLevel[this.config.dataSource] / 0.3048).toFixed(1);
 					this.seaLevelUnit = "ft";
 					break;
-			}	
+			}
 		}
-		
+
 		if (this.checkData(data, "windSpeed")) {
 			if (this.config.useBeaufort){
 				this.windSpeed = this.ms2Beaufort(this.roundValue(data.weather.windSpeed[this.config.dataSource]));
@@ -368,12 +368,12 @@ Module.register("MMM-MarineWeather",{
 				this.windSpeedUnit = "m/s";
 			}
 		}
-		
+
 		if (this.checkData(data, "windDirection")) {
 			this.windDeg = data.weather.windDirection[this.config.dataSource];
 			this.windDirection = this.deg2Cardinal(data.weather.windDirection[this.config.dataSource]);
 		}
-		
+
 		if (this.checkData(data, "waveHeight")) {
 			switch(this.config.units) {
 				case "metric":
@@ -395,7 +395,7 @@ Module.register("MMM-MarineWeather",{
 		if (this.checkData(data, "wavePeriod")) {
 			this.wavePeriod = parseFloat(data.weather.wavePeriod[this.config.dataSource]).toFixed(1);
 		}
-		
+
 		if(this.config.showTides) {
 			for(let i = 0; i < this.config.maximumTides; i++) {
 				this.tides.push({
@@ -478,7 +478,7 @@ Module.register("MMM-MarineWeather",{
 		var decimals = this.config.roundTemp ? 0 : 1;
 		return parseFloat(temperature).toFixed(decimals);
 	},
-	
+
 	// Check if data is usable
 	checkData: function(data, param) {
 		if(this.config.params.indexOf(param) !== -1) {
@@ -492,7 +492,7 @@ Module.register("MMM-MarineWeather",{
 			return false;
 		}
 	},
-	
+
 	// Return a moment.js LocaleSpecification with the corresponding timeformat
 	getLocaleSpecification: function(timeFormat) {
 		switch (timeFormat) {
