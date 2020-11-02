@@ -20,6 +20,8 @@ Module.register("MMM-MarineWeather",{
 		animationSpeed: 1000, // 1 second
 		showDirectionAsArrow: false,
 		showGustAsWind: false,
+		showTides: false,
+		maximumTides: 2,
 		useBeaufort: false,
 		useKMPH: false,
 		roundTemp: false,
@@ -28,19 +30,27 @@ Module.register("MMM-MarineWeather",{
 		retryDelay: 2500, // 2,5 seconds
 
 		apiBase: "https://api.stormglass.io/",
-		MWEndpoint: "v2/weather/point",
+		weatherEndpoint: "v2/weather/point",
 		params: ["airTemperature", "waterTemperature", "pressure", "cloudCover", "windSpeed", "windDirection", "waveHeight", "waveDirection"],
-		dataSource: "sg"
+		dataSource: "sg",
+		tideEndpoint: "v2/tide/extremes/point",
 	},
 
 	// Define required scripts
 	getStyles: function() {
 		return ["MMM-MarineWeather.css", "font-awesome.css"];
 	},
+	
+	// Define required scripts.
+	getScripts: function () {
+		return ["moment.js"];
+	},
 
 	// Define start sequence
 	start: function() {
 		Log.info("Starting module: " + this.name);
+		
+		moment.updateLocale(config.language, this.getLocaleSpecification(config.timeFormat));
 
 		this.airTemperature = null;
 		this.waterTemperature = null;
@@ -61,6 +71,7 @@ Module.register("MMM-MarineWeather",{
 		this.waveDeg = null;
 		this.waveDirection = null;
 		this.wavePeriod = null;
+		this.tides = [];
 		this.loaded = false;
 
 		this.scheduleUpdate(this.config.initialLoadDelay);
@@ -233,6 +244,37 @@ Module.register("MMM-MarineWeather",{
 		}
 
 		wrapper.appendChild(small);
+		
+		if(this.config.showTides) {
+			var small = document.createElement("div");
+			small.className = "dimmed small";
+
+			for(let i = 0; i < this.config.maximumTides; i++) {
+			
+				if(this.tides[i].type == "high") {
+					var highIcon = document.createElement("span");
+					highIcon.className = "fas fa-sort-up";
+					small.appendChild(highIcon);
+				}
+				
+				if(this.tides[i].type == "low") {
+					var lowIcon = document.createElement("span");
+					lowIcon.className = "fas fa-sort-down";
+					small.appendChild(lowIcon);				
+				}
+			
+				var tide = document.createElement("span");
+				tide.innerHTML = " " + this.tides[i].time;
+				small.appendChild(tide);
+				
+				var spacer = document.createElement("span");
+				spacer.innerHTML = "&nbsp;";
+				small.appendChild(spacer);
+			
+			}
+			
+			wrapper.appendChild(small);
+		}
 
 		return wrapper;
 	},
@@ -243,27 +285,27 @@ Module.register("MMM-MarineWeather",{
 			this.updateDom(this.config.animationSpeed);
 		} else if (notification === "ERROR") {
 			Log.error(this.name + ": Do not access to data (" + payload + " HTTP error).");
-		} else if (notification === "DATA") {
+		} else if (notification === "DATA") { //Log.error(payload);
 			this.processMW(payload);
 		}
 	},
 
 	// Use the received data to set the various values before update DOM
 	processMW: function(data) {
-		if (!data || !data.hours || typeof data.hours[0].time === "undefined") {
+		if (!data || !data.weather || typeof data.weather.time === "undefined") {
 			Log.error(this.name + ": Do not receive usable data.");
 			return;
 		}
 		
 		switch(this.config.units) {
 			case "metric":
-				this.waterTemperature = this.roundValue(data.hours[0].waterTemperature[this.config.dataSource]);
-				this.airTemperature = this.roundValue(data.hours[0].airTemperature[this.config.dataSource]);
+				this.waterTemperature = this.roundValue(data.weather.waterTemperature[this.config.dataSource]);
+				this.airTemperature = this.roundValue(data.weather.airTemperature[this.config.dataSource]);
 				this.temperatureUnit = "&deg;C";
 				break;
 			case "imperial":
-				this.waterTemperature = this.roundValue((data.hours[0].waterTemperature[this.config.dataSource] * 1.8) + 32);
-				this.airTemperature = this.roundValue((data.hours[0].airTemperature[this.config.dataSource] * 1.8) + 32);
+				this.waterTemperature = this.roundValue((data.weather.waterTemperature[this.config.dataSource] * 1.8) + 32);
+				this.airTemperature = this.roundValue((data.weather.airTemperature[this.config.dataSource] * 1.8) + 32);
 				this.temperatureUnit = "&deg;F";
 				break;
 		}
@@ -271,28 +313,28 @@ Module.register("MMM-MarineWeather",{
 		if (this.checkData(data, "pressure")) {
 			switch(this.config.units) {
 				case "metric":
-					this.pressure = parseFloat(data.hours[0].pressure[this.config.dataSource]).toFixed(0);
+					this.pressure = parseFloat(data.weather.pressure[this.config.dataSource]).toFixed(0);
 					this.pressureUnit = "hPa";
 					break;
 				case "imperial":
-					this.pressure = parseFloat(data.hours[0].pressure[this.config.dataSource] / 68.94).toFixed(0);
+					this.pressure = parseFloat(data.weather.pressure[this.config.dataSource] / 68.94).toFixed(0);
 					this.pressureUnit = "psi";
 					break;
 			}
 		}
 		
 		if (this.checkData(data, "cloudCover")) {
-			this.cloudCover = parseFloat(data.hours[0].cloudCover[this.config.dataSource]).toFixed(0);
+			this.cloudCover = parseFloat(data.weather.cloudCover[this.config.dataSource]).toFixed(0);
 		}
 		
 		if (this.checkData(data, "visibility")) {
 			switch(this.config.units) {
 				case "metric":
-					this.visibility = parseFloat(data.hours[0].visibility[this.config.dataSource]).toFixed(1);
+					this.visibility = parseFloat(data.weather.visibility[this.config.dataSource]).toFixed(1);
 					this.visibilityUnit = "km";
 					break;
 				case "imperial":
-					this.visibility = parseFloat(data.hours[0].visibility[this.config.dataSource] * 0.6214).toFixed(1);
+					this.visibility = parseFloat(data.weather.visibility[this.config.dataSource] * 0.6214).toFixed(1);
 					this.visibilityUnit = "mi";
 					break;
 			}
@@ -301,11 +343,11 @@ Module.register("MMM-MarineWeather",{
 		if (this.checkData(data, "seaLevel")) {
 			switch(this.config.units) {
 				case "metric":
-					this.seaLevel = parseFloat(data.hours[0].seaLevel[this.config.dataSource]).toFixed(1);
+					this.seaLevel = parseFloat(data.weather.seaLevel[this.config.dataSource]).toFixed(1);
 					this.seaLevelUnit = "m";
 					break;
 				case "imperial":
-					this.seaLevel = parseFloat(data.hours[0].seaLevel[this.config.dataSource] / 0.3048).toFixed(1);
+					this.seaLevel = parseFloat(data.weather.seaLevel[this.config.dataSource] / 0.3048).toFixed(1);
 					this.seaLevelUnit = "ft";
 					break;
 			}	
@@ -313,45 +355,54 @@ Module.register("MMM-MarineWeather",{
 		
 		if (this.checkData(data, "windSpeed")) {
 			if (this.config.useBeaufort){
-				this.windSpeed = this.ms2Beaufort(this.roundValue(data.hours[0].windSpeed[this.config.dataSource]));
+				this.windSpeed = this.ms2Beaufort(this.roundValue(data.weather.windSpeed[this.config.dataSource]));
 				this.windSpeedUnit = "bf";
 			} else if (this.config.useKMPH) {
-				this.windSpeed = parseFloat((data.hours[0].windSpeed[this.config.dataSource] * 60 * 60) / 1000).toFixed(0);
+				this.windSpeed = parseFloat((data.weather.windSpeed[this.config.dataSource] * 60 * 60) / 1000).toFixed(0);
 				this.windSpeedUnit = "km/h";
 			} else if(this.config.units === "imperial") {
-				this.windSpeed = parseFloat((data.hours[0].windSpeed[this.config.dataSource] * 60 * 60) / 1609).toFixed(0);
+				this.windSpeed = parseFloat((data.weather.windSpeed[this.config.dataSource] * 60 * 60) / 1609).toFixed(0);
 				this.windSpeedUnit = "mph";
 			} else {
-				this.windSpeed = parseFloat(data.hours[0].windSpeed[this.config.dataSource]).toFixed(0);
+				this.windSpeed = parseFloat(data.weather.windSpeed[this.config.dataSource]).toFixed(0);
 				this.windSpeedUnit = "m/s";
 			}
 		}
 		
 		if (this.checkData(data, "windDirection")) {
-			this.windDeg = data.hours[0].windDirection[this.config.dataSource];
-			this.windDirection = this.deg2Cardinal(data.hours[0].windDirection[this.config.dataSource]);
+			this.windDeg = data.weather.windDirection[this.config.dataSource];
+			this.windDirection = this.deg2Cardinal(data.weather.windDirection[this.config.dataSource]);
 		}
 		
 		if (this.checkData(data, "waveHeight")) {
 			switch(this.config.units) {
 				case "metric":
-					this.waveHeight = parseFloat(data.hours[0].waveHeight[this.config.dataSource]).toFixed(1);
+					this.waveHeight = parseFloat(data.weather.waveHeight[this.config.dataSource]).toFixed(1);
 					this.waveHeightUnit = "m";
 					break;
 				case "imperial":
-					this.waveHeight = parseFloat(data.hours[0].waveHeight[this.config.dataSource] / 0.3048).toFixed(1);
+					this.waveHeight = parseFloat(data.weather.waveHeight[this.config.dataSource] / 0.3048).toFixed(1);
 					this.waveHeightUnit = "ft";
 					break;
 			}
 		}
 		
 		if (this.checkData(data, "waveDirection")) {
-			this.waveDeg = data.hours[0].waveDirection[this.config.dataSource];
-			this.waveDirection = this.deg2Cardinal(data.hours[0].waveDirection[this.config.dataSource]);
+			this.waveDeg = data.weather.waveDirection[this.config.dataSource];
+			this.waveDirection = this.deg2Cardinal(data.weather.waveDirection[this.config.dataSource]);
 		}
 
 		if (this.checkData(data, "wavePeriod")) {
-			this.wavePeriod = parseFloat(data.hours[0].wavePeriod[this.config.dataSource]).toFixed(1);
+			this.wavePeriod = parseFloat(data.weather.wavePeriod[this.config.dataSource]).toFixed(1);
+		}
+		
+		if(this.config.showTides) {
+			for(let i = 0; i < this.config.maximumTides; i++) {
+				this.tides.push({
+					type: data.tide[i].type,
+					time: moment(data.tide[i].time).local().format("LT")
+				});
+			}
 		}
 
 		this.loaded = true;
@@ -431,7 +482,7 @@ Module.register("MMM-MarineWeather",{
 	// Check if data is usable
 	checkData: function(data, param) {
 		if(this.config.params.indexOf(param) !== -1) {
-			if (typeof data.hours[0][param] !== "undefined") {
+			if (typeof data.weather[param] !== "undefined") {
 				return true;
 			} else {
 				Log.error(this.name + ": Do not receive usable data for " + param + " (this information will be hidden).");
@@ -440,6 +491,24 @@ Module.register("MMM-MarineWeather",{
 		} else {
 			return false;
 		}
-	}
+	},
+	
+	// Return a moment.js LocaleSpecification with the corresponding timeformat
+	getLocaleSpecification: function(timeFormat) {
+		switch (timeFormat) {
+		case 12: {
+			return { longDateFormat: {LT: "h:mm A"} };
+			break;
+		}
+		case 24: {
+			return { longDateFormat: {LT: "HH:mm"} };
+			break;
+		}
+		default: {
+			return { longDateFormat: {LT: moment.localeData().longDateFormat("LT")} };
+			break;
+		}
+		}
+	},
 
 });

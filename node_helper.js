@@ -15,45 +15,77 @@ const fetch = require('node-fetch');
 
 module.exports = NodeHelper.create({
 
-	getParams: function() {
+	getUrl: function(type) {
 		var self = this;
-
-		var currentDate = Math.floor(Date.now() / 1000)
+		
+		var currentTime = Math.floor(Date.now() / 1000);
+		
 		var params = "?";
+		var url = self.config.apiBase;
 		
 		params += "lat=" + self.config.latitude + "&lng=" + self.config.longitude;
-		params += "&params=" + self.config.params.join();
-		params += "&source=" + self.config.dataSource;
-		params += "&start=" + currentDate  + "&end=" + currentDate ;
+		
+		switch(type) {
+			case "weather":
+				params += "&start=" + currentTime  + "&end=" + currentTime;
+				params += "&params=" + self.config.params.join();
+				params += "&source=" + self.config.dataSource;
+				
+				url += self.config.weatherEndpoint;
+				url += params;
+				break;
+				
+			case "tide":
+				params += "&start=" + currentTime;
+				
+				url += self.config.tideEndpoint;
+				url += params;
+				break;
+		}
 
-		return params;
+		return url;
 	},
-
-	getData: function() {
+	
+	getData: function(apis) {
 		var self = this;
-
-		fetch(self.config.apiBase + self.config.MWEndpoint + self.getParams(), {
-				method: 'GET',
-				headers: {'Authorization': self.config.appid}
+		
+		var options = {
+			method: 'GET',
+			headers: {'Authorization': self.config.appid}
+		};
+		
+		Promise.all(apis.map(function(api) {
+			return fetch(self.getUrl(api), options);
+		}))
+		.then(function(responses) {
+			return Promise.all(responses.map(function(response) {
+				if (response.status === 200) {
+					return response.json();
+				} else {
+					self.sendSocketNotification("ERROR", response.status);
+				}
+			}));
 		})
-		.then(function(response) {
-			if (response.status === 200) {
-				return response.json();
+		.then(function(result) {
+			if(self.config.showTides) {
+				self.sendSocketNotification("DATA", {"weather": result[0].hours[0], "tide": result[1].data});
 			} else {
-				self.sendSocketNotification("ERROR", response.status);
+				self.sendSocketNotification("DATA", {"weather": result[0].hours[0]});
 			}
-		})
-		.then(function(body) {
-			self.sendSocketNotification("DATA", body);
 		});
 	},
 
 	socketNotificationReceived: function(notification, payload) {
 		var self = this;
-		if (notification === 'CONFIG') {
+		
+		if (notification === "CONFIG") {
 			self.config = payload;
-			self.sendSocketNotification("STARTED", true);
-			self.getData();
+			self.sendSocketNotification("STARTED", true);	
+			if(self.config.showTides) {
+				self.getData(["weather", "tide"]);
+			} else {
+				self.getData(["weather"]);
+			}
 		}
 	}
 });

@@ -1,5 +1,5 @@
 # Module: MMM-MarineWeather
-This module displays the current marine weather, including the water temperature, the air temperature, the current wind conditions (speed and direction), current wave conditions (height, direction and period) and more specific informations (pressure, cloud cover, visibility, sea level).
+This module displays the current marine weather, including the water temperature, the air temperature, the current wind conditions (speed and direction), current wave conditions (height, direction and period), tides and more specific informations (pressure, cloud cover, visibility, sea level).
 
 Apart from water temperature and air temperature, all other information may be enabled or disabled.
 
@@ -74,19 +74,23 @@ The following properties can be configured:
 | `animationSpeed`             | Speed of the update animation. (Milliseconds) <br><br> **Possible values:**`0` - `5000` <br> **Default value:** `1000` (1 second)
 | `showWindDirectionAsArrow`   | Show the wind direction as an arrow instead of abbreviation <br><br> **Possible values:** `true` or `false` <br> **Default value:** `false`
 | `showGustAsWind`             | Show the wind gust instead of the wind speed. <br><br> **Possible values:** `true` or `false` <br> **Default value:** `false`
+| `showTides`                  | Show time of tide.  <br><br> **Possible values:** `true` or `false` <br> **Default value:** `false`
+| `maximumTides`               | The maximum number of tides shown.  <br><br> **Possible values:**`1` - `40` <br> **Default value:** `2`
 | `useBeaufort`                | Use the Beaufort scale for wind speed and wave speed or using the default units. <br><br> **Possible values:** `true` or `false` <br> **Default value:** `false`
 | `useKMPH`                    | Use KMPH as units for wind speed. <br><br> **Possible values:**`true` or `false`<br>**Default value:** `false`
 | `roundTemp`                  | Round temperature value to nearest integer. <br><br> **Possible values:** `true` (round to integer) or `false` (display exact value with decimal point) <br> **Default value:** `false`
 | `initialLoadDelay`           | The initial delay before loading. If you have multiple modules that use the same API key, you might want to delay one of the requests. (Milliseconds) <br><br> **Possible values:** `1000` - `5000` <br> **Default value:**  `0`
 | `retryDelay`                 | The delay before retrying after a request failure. (Milliseconds) <br><br> **Possible values:** `1000` - `60000` <br> **Default value:**  `2500` (2,5 seconds)
 | `apiBase`                    | The StormGlass API base URL. <br><br> **Default value:**  `'https://api.stormglass.io/'`
-| `apodEndpoint`               | The StormGlass API v2 end point. <br><br> **Default value:**  `'v2/weather/point'`
+| `weatherEndpoint`            | The StormGlass Weather API v2 end point. <br><br> **Default value:**  `'v2/weather/point'`
 | `params`                     | The array of parameters for the StormGlass API response. <br><br> **Required parameters:** `'airTemperature'` and `'waterTemperature'` <br> **Optionals parameters:** `'pressure'`, `'cloudCover'`, `'visibility'`, `'seaLevel'`, `'windSpeed'`, `'gust'`, `'windDirection'`, `'waveHeight'`, `'waveDirection'` or `'wavePeriod'` <br> **Default value:**  `['airTemperature', 'waterTemperature', 'pressure', 'cloudCover', 'windSpeed', 'windDirection', 'waveHeight', 'waveDirection']`
 | `dataSource`                 | The StormGlass API information [source](https://docs.stormglass.io/#sources). <br><br> **Possible values:** `'sg'` or `'noaa'` (except sea level) <br> **Default value:**  `'sg'` (StormGlass).
+| `tideEndpoint`            | The StormGlass Tide API v2 end point. <br><br> **Default value:**  `'v2/tide/extremes/point'`
 
 ## Todo:
 
-- [ ] Add a coloured legend depending on the water temperature
+- [ ] Add a coloured legend depending on the water temperature.
+- [x] Add tides informations.
 - [x] Add customization of displayed information except water temperature and air temperature.
 - [x] Add specific informations (pressure, cloud cover, visibility, sea level) with API v2.
 - [x] Convert data to the selected unit system with config.units
